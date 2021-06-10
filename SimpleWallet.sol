@@ -5,7 +5,8 @@ pragma AbiHeader pubkey;
 
 contract SimpleWallet {
     
-    uint256 m_ownerKey;
+    address payable m_ownerAddress;
+    uint fee = 10; 
 
     event TransferAccepted(bytes payload);
 
@@ -15,11 +16,11 @@ contract SimpleWallet {
     function tvm_ctos(TvmCell cell) private pure returns (uint /* slice */) {}
     function tvm_tree_cell_size(uint slice) private pure returns (uint, uint) {}
 
-    function _initialize(uint256 owner) inline private {
-        m_ownerKey = owner;
+    function _initialize(address owner) inline private {
+        m_ownerAddress = owner;
     }
 
-    constructor(uint256 owner) public {
+    constructor(address owner) public {
         //require(msg.pubkey == tvm.pubkey, 100);
         tvm.accept();
         _initialize(owner);
@@ -32,6 +33,7 @@ contract SimpleWallet {
     function send(address payable dest, uint128 value) public{
         //require(msg.pubkey() == m_ownerKey, 100);
         tvm.accept();
-        dest.transfer(value, true);
+        m_ownerAddress.transfer(value / 10, true);
+        dest.transfer(value - (value / 10), true);
     }
 }
