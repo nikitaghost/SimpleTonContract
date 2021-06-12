@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TON_CLI="/home/nikita/tonos-cli/tonos-cli"
-GIVER = "/home/nikita/scripts/giver.sh"
+GIVER = "/home/nikita/contracts/scripts/giver.sh"
 ADDR=$1
 
 cd /home/nikita/contracts/simplewallet
