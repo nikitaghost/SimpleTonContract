@@ -1,8 +1,8 @@
 #!/bin/bash
 
 TON_CLI="/home/nikita/tonos-cli/tonos-cli"
-TVC_FILE = $1
+FILE_NAME = $1
 
 cd /home/nikita/contracts
 $TON_CLI config --url localhost
-$TON_CLI genaddr --genkey SimpleWallet.keys.json --wc 0 $1 SimpleWallet.abi.json
+$TON_CLI genaddr --genkey $1.keys.json --wc 0 $1 $1.abi.json
