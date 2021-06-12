@@ -5,4 +5,4 @@ FILE_NAME = $1
 
 cd /home/nikita/contracts
 $TON_CLI config --url localhost
-$TON_CLI genaddr --genkey $1.keys.json --wc 0 $1 $1.abi.json
+$TON_CLI genaddr --genkey $1.keys.json --wc 0 $1.tvc $1.abi.json
