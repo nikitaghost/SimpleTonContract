@@ -1,0 +1,851 @@
+.version sol 0.45.0
+
+.macro constructor
+DROP
+GETGLOB 8
+ISNULL
+IFREF {
+	CALL $c4_to_c7_with_init_storage$
+}
+;; constructor protection
+GETGLOB 6
+THROWIF 51
+PUSHINT 1
+SETGLOB 6
+;; end constructor protection
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+LDUQ 8
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 8
+}
+IFNOT
+ENDS
+;; param: owner
+;; param: ticketCost
+;; param: percent
+; constructor Lottery
+GETGLOB 2
+THROWIFNOT 101
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; ==
+GETGLOB 2
+EQUAL
+THROWIFNOT 102
+ACCEPT
+; expValue
+; end expValue
+;; push identifier now
+NOW
+; colValue
+SETGLOB 10
+; end colValue
+;; push identifier owner
+;; push identifier ticketCost
+;; push identifier percent
+BLKPUSH 3, 2
+CALLREF {
+	CALL $_initialize_internal_macro$
+}
+; end constructor Lottery
+BLKDROP 3
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.macro _initialize
+DROP
+GETGLOB 8
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+LDUQ 8
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 8
+}
+IFNOT
+ENDS
+;; param: owner
+;; param: ticketCost
+;; param: percent
+CALLREF {
+	CALL $_initialize_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	_initialize_internal
+.type	_initialize_internal, @function
+CALL $_initialize_internal_macro$
+
+.macro _initialize_internal_macro
+;; param: owner
+;; param: ticketCost
+;; param: percent
+; function _initialize
+; expValue
+; end expValue
+;; push identifier owner
+PUSH S2
+; colValue
+SETGLOB 11
+; end colValue
+; expValue
+; end expValue
+;; push identifier ticketCost
+; colValue
+; end colValue
+; expValue
+; end expValue
+; colValue
+; end colValue
+; expValue
+; end expValue
+; colValue
+; end colValue
+; expValue
+; end expValue
+;; push identifier percent
+; colValue
+; end colValue
+; end function _initialize
+SWAP
+SETGLOB 12
+PUSHINT 0
+SETGLOB 13
+PUSHINT 0
+SETGLOB 15
+SETGLOB 14
+DROP
+
+.macro acceptTransfer
+DROP
+GETGLOB 8
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDREF
+ENDS
+;; param: payload
+; function acceptTransfer
+;; if
+;; push identifier l_status
+GETGLOB 13
+PUSHCONT {
+	;; get member value
+	CALLREF {
+		CALL $message_balance_macro$
+	}
+	;; decl: uint_payload
+	;; transfer()
+	;; push identifier uint_payload
+	DUP
+	;; %
+	;; push identifier l_ticketCost
+	GETGLOB 12
+	MOD
+	;; get member sender
+	GETGLOB 9
+	NEWC
+	STSLICECONST x62_
+	STSLICE
+	SWAP
+	STGRAMS
+	PUSHINT 107
+	STZEROES
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+	;; push identifier uint_payload
+	DUP
+	;; /
+	;; push identifier l_ticketCost
+	GETGLOB 12
+	DIV
+	CALLREF {
+		CALL $buyTicket_internal_macro$
+	}
+	DROP
+}
+IFNOT
+;; end if
+;; push identifier payload
+DUP
+;; emit TransferAccepted
+PUSHSLICE xc00000000000000000000000007d729cc8
+NEWC
+STSLICE
+STREF
+ENDC
+PUSHINT 0
+SENDRAWMSG
+; end function acceptTransfer
+DROP
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.macro buyTicket
+DROP
+GETGLOB 8
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+ENDS
+;; param: payload
+CALLREF {
+	CALL $buyTicket_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	buyTicket_internal
+.type	buyTicket_internal, @function
+CALL $buyTicket_internal_macro$
+
+.macro buyTicket_internal_macro
+;; param: payload
+; function buyTicket
+;; if
+;; push identifier payload
+DUP
+PUSHCONT {
+	;; ++
+	; expValue
+	;; fetch l_numTickets
+	GETGLOB 15
+	; end expValue
+	DUP
+	INC
+	; colValue
+	SETGLOB 15
+	; end colValue
+	;; decl: tId
+	;; get member sender
+	GETGLOB 9
+	TUPLE 1
+	; expValue
+	;; fetch tickets
+	;; push identifier tId
+	PUSH S1
+	GETGLOB 16
+	; end expValue
+	ROT
+	; colValue
+	CALLREF {
+		UNTUPLE 1
+		NEWC
+		STSLICE
+	}
+	ROTREV
+	PUSHINT 256
+	DICTUSETB
+	SETGLOB 16
+	; end colValue
+	;; push identifier payload
+	PUSH S1
+	;; -
+	;; push identifier l_ticketCost
+	GETGLOB 12
+	SUB
+	CALL $buyTicket_internal$
+	DROP
+}
+IF
+;; end if
+; end function buyTicket
+DROP
+
+.macro chooseWinner
+DROP
+GETGLOB 8
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $chooseWinner_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHSLICE x0000000000000000000000003cff79122_
+	STSLICER
+	STU 256
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	chooseWinner_internal
+.type	chooseWinner_internal, @function
+CALL $chooseWinner_internal_macro$
+
+.macro chooseWinner_internal_macro
+;; ret param: winnerAddress
+PUSHINT 0
+; function chooseWinner
+CALLREF {
+	CALL $random_internal_macro$
+}
+;; decl: randomNum
+;; map.fetch
+;; push identifier randomNum
+DUP
+;; push identifier tickets
+GETGLOB 16
+PUSHINT 256
+DICTUGET
+NULLSWAPIFNOT
+PUSHREFCONT {
+	LDMSGADDR
+	ENDS
+	TUPLE 1
+}
+IF
+;; decl: opt_winner
+;; push identifier opt_winner
+BLKPUSH 2, 0
+ISNULL
+THROWIF 63
+;; decl: t_winner
+;; get member t_owner
+;; push identifier t_winner
+DUP
+INDEX 0
+;; decl: dest
+;; push identifier _owner
+GETGLOB 11
+;; decl: m_owner
+ACCEPT
+;; push identifier l_numTickets
+GETGLOB 15
+;; *
+;; push identifier l_ticketCost
+GETGLOB 12
+MUL
+;; /
+PUSHINT 100
+DIV
+;; *
+;; push identifier l_percent
+GETGLOB 14
+MUL
+;; decl: prize
+;; transfer()
+;; push identifier prize
+DUP
+;; uint128
+UFITS 128
+;; push identifier dest
+PUSH S3
+NEWC
+STSLICECONST x62_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 107
+STZEROES
+ENDC
+PUSHINT 0
+SENDRAWMSG
+;; push identifier l_numTickets
+GETGLOB 15
+;; *
+;; push identifier l_ticketCost
+GETGLOB 12
+MUL
+;; -
+;; push identifier prize
+PUSH S1
+SUB
+;; decl: remainsMoney
+;; transfer()
+;; push identifier remainsMoney
+DUP
+;; uint128
+UFITS 128
+;; push identifier m_owner
+PUSH S3
+NEWC
+STSLICECONST x62_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 107
+STZEROES
+ENDC
+PUSHINT 0
+SENDRAWMSG
+; expValue
+; end expValue
+; colValue
+; end colValue
+BLKDROP 7
+PUSHINT 1
+SETGLOB 13
+; end function chooseWinner
+
+.macro getNumOfSoldTickets
+DROP
+GETGLOB 8
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $getNumOfSoldTickets_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHSLICE x0000000000000000000000002ebdb1a92_
+	STSLICER
+	STU 256
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getNumOfSoldTickets_internal
+.type	getNumOfSoldTickets_internal, @function
+CALL $getNumOfSoldTickets_internal_macro$
+
+.macro getNumOfSoldTickets_internal_macro
+;; ret param: numOfSoldTickets
+; function getNumOfSoldTickets
+; expValue
+; end expValue
+;; push identifier l_numTickets
+; colValue
+GETGLOB 15
+; end colValue
+; end function getNumOfSoldTickets
+
+.globl	random_internal
+.type	random_internal, @function
+CALL $random_internal_macro$
+
+.macro random_internal_macro
+;; ret param: retParam@0
+PUSHINT 0
+; function random
+;; push identifier l_numTickets
+GETGLOB 15
+;; +
+INC
+RAND
+DROP
+; end function random
+
+.macro c7_to_c4
+GETGLOB 16
+GETGLOB 15
+GETGLOB 14
+GETGLOB 13
+GETGLOB 12
+GETGLOB 11
+GETGLOB 10
+GETGLOB 6
+GETGLOB 3
+GETGLOB 2
+NEWC
+STU 256
+STU 64
+STU 1
+STU 32
+STSLICE
+BLKSWAP 5, 1
+NEWC
+STU 128
+STU 8
+STU 8
+STU 128
+STDICT
+STBREFR
+ENDC
+POP C4
+
+.macro c4_to_c7
+PUSHROOT
+CTOS        ; c4
+LDU 256      ; pubkey c4
+LDU 64      ; pubkey timestamp c4
+LDU 1       ; pubkey [timestamp] constructor_flag memory
+LDU 32
+LDMSGADDR
+;; load next cell
+LDREF
+ENDS
+CTOS
+LDU 128
+LDU 8
+LDU 8
+LDU 128
+LDDICT
+ENDS
+SETGLOB 16
+SETGLOB 15
+SETGLOB 14
+SETGLOB 13
+SETGLOB 12
+SETGLOB 11
+SETGLOB 10
+TRUE
+SETGLOB 8
+; pubkey [timestamp] constructor_flag
+SETGLOB 6   ; pubkey [timestamp]
+SETGLOB 3   ; D
+SETGLOB 2
+
+.macro c4_to_c7_with_init_storage
+PUSHROOT
+CTOS        ; c4
+DUP        ; c4 c4
+SBITS      ; c4 bits
+GTINT 1    ; c4 bits>1
+PUSHCONT {
+	LDU 256      ; pubkey c4
+	LDU 64      ; pubkey timestamp c4
+	LDU 1       ; pubkey [timestamp] constructor_flag memory
+	LDU 32
+	LDMSGADDR
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+	LDU 8
+	LDU 8
+	LDU 128
+	LDDICT
+	ENDS
+	SETGLOB 16
+	SETGLOB 15
+	SETGLOB 14
+	SETGLOB 13
+	SETGLOB 12
+	SETGLOB 11
+	SETGLOB 10
+	TRUE
+	SETGLOB 8
+	; pubkey [timestamp] constructor_flag
+	SETGLOB 6   ; pubkey [timestamp]
+	SETGLOB 3   ; D
+	SETGLOB 2
+}
+PUSHCONT {
+	PLDDICT   ; D
+	; init timestamp
+	PUSHINT 0
+	SETGLOB 10
+	; init _owner
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SETGLOB 11
+	; init l_ticketCost
+	PUSHINT 0
+	SETGLOB 12
+	; init l_status
+	PUSHINT 0
+	SETGLOB 13
+	; init l_percent
+	PUSHINT 0
+	SETGLOB 14
+	; init l_numTickets
+	PUSHINT 0
+	SETGLOB 15
+	; init tickets
+	NEWDICT
+	SETGLOB 16
+	; set contract pubkey
+	PUSHINT 0
+	SWAP
+	PUSHINT 64
+	DICTUGET
+	THROWIFNOT 61
+	PLDU 256
+	SETGLOB 2
+	PUSHINT 0 ; timestamp
+	SETGLOB 3
+	PUSHINT 0 ; constructor_flag
+	SETGLOB 6
+TRUE
+SETGLOB 8
+	;; init state var: l_ticketCost
+	PUSHINT 0
+	SETGLOB 12
+}
+IFELSE
+
+.internal-alias :main_internal, 0
+.internal :main_internal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function: main_internal
+;; param: contract_balance
+;; param: msg_balance
+;; param: int_msg_info
+;; param: msg_body_slice
+;; param: transaction_type
+PUSH S2
+CTOS
+LDU 4       ; bounced tail
+LDMSGADDR   ; bounced src tail
+DROP
+SETGLOB 9
+MODPOW2 1
+IFRET
+PUSH S1    ; body
+SEMPTY     ; isEmpty
+IFRET
+PUSH S1 ; body
+LDUQ 32  ; [funcId] body' ok
+THROWIFNOT 60 ; funcId body'
+PUSH S1 ; funcId body' funcId
+IFNOTRET
+SWAP
+CALLREF {
+	CALL $public_function_selector$
+}
+GETGLOB 7
+ISNULL
+THROWIF 60
+
+.internal-alias :main_external, -1
+.internal :main_external
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SETGLOB 9
+PUSH S1
+CALLREF {
+	CALL $c4_to_c7_with_init_storage$
+}
+LDU 1 ; haveSign msgSlice
+SWAP
+PUSHCONT {
+	PUSHINT 512
+	LDSLICEX ; signatureSlice msgSlice
+	DUP      ; signatureSlice msgSlice msgSlice
+	HASHSU   ; signatureSlice msgSlice hashMsgSlice
+	SWAP  ; signatureSlice hashMsgSlice msgSlice
+	LDU 1 ; signatureSlice hashMsgSlice havePubkey msgSlice
+	SWAP  ; signatureSlice hashMsgSlice msgSlice havePubkey
+	PUSHCONT {
+		LDU 256       ; signatureSlice hashMsgSlice pubkey msgSlice
+		XCHG s3
+		SWAP
+	}
+	PUSHCONT {
+		XCHG s2
+		GETGLOB 2
+	}
+	IFELSE
+	DUP
+	SETGLOB 5
+	CHKSIGNU      ; msgSlice isSigned
+	THROWIFNOT 40 ; msgSlice
+}
+PUSHCONT {
+	LDU 1      ; havePubkey msgSlice
+	SWAP       ; msgSlice havePubkey
+	THROWIF 58 ; msgSlice
+}
+IFELSE
+LDU 64                         ; timestamp msgSlice
+SWAP                           ; msgSlice timestamp
+CALL $replay_protection_macro$ ; msgSlice
+LDU 32  ; expireAt msgSlice
+SWAP    ; msgSlice expireAt
+NOW     ; msgSlice expireAt now
+GREATER ; msgSlice expireAt>now
+THROWIFNOT 57
+LDU  32 ; funcId body
+SWAP    ; body funcId
+CALLREF {
+	CALL $public_function_selector$
+}
+GETGLOB 7
+ISNULL
+THROWIF 60
+
+.macro timestamp
+DROP
+ENDS
+CALLREF {
+	CALL $c4_to_c7$
+}
+GETGLOB 10
+PUSH S1
+PUSHCONT {
+	PUSHSLICE xc0000000000000000000000000e817e535
+	NEWC
+	STSLICE
+	STU 32
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+IF
+TRUE
+SETGLOB 7
+
+.macro public_function_selector
+DUP
+PUSHINT 1651859806
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 989251236
+	EQUAL
+	IFJMPREF {
+		CALL $getNumOfSoldTickets$
+	}
+	DUP
+	PUSHINT 1410441224
+	EQUAL
+	IFJMPREF {
+		CALL $buyTicket$
+	}
+	DUP
+	PUSHINT 1516506356
+	EQUAL
+	IFJMPREF {
+		CALL $acceptTransfer$
+	}
+	DUP
+	PUSHINT 1651859806
+	EQUAL
+	IFJMPREF {
+		CALL $constructor$
+	}
+}
+DUP
+PUSHINT 1946018888
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 1746396469
+	EQUAL
+	IFJMPREF {
+		CALL $timestamp$
+	}
+	DUP
+	PUSHINT 1932142121
+	EQUAL
+	IFJMPREF {
+		CALL $_initialize$
+	}
+	DUP
+	PUSHINT 1946018888
+	EQUAL
+	IFJMPREF {
+		CALL $chooseWinner$
+	}
+}

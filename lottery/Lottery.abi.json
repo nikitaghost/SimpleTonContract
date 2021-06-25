@@ -1,0 +1,78 @@
+{
+	"ABI version": 2,
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"owner","type":"address"},
+				{"name":"ticketCost","type":"uint128"},
+				{"name":"percent","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "_initialize",
+			"inputs": [
+				{"name":"owner","type":"address"},
+				{"name":"ticketCost","type":"uint128"},
+				{"name":"percent","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "acceptTransfer",
+			"inputs": [
+				{"name":"payload","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "buyTicket",
+			"inputs": [
+				{"name":"payload","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "chooseWinner",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"winnerAddress","type":"uint256"}
+			]
+		},
+		{
+			"name": "getNumOfSoldTickets",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"numOfSoldTickets","type":"uint256"}
+			]
+		},
+		{
+			"name": "timestamp",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"timestamp","type":"uint32"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+		{
+			"name": "TransferAccepted",
+			"inputs": [
+				{"name":"payload","type":"bytes"}
+			],
+			"outputs": [
+			]
+		}
+	]
+}
