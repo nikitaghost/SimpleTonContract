@@ -1,0 +1,2 @@
+Simple Wallet deployed at address: 0:e24fb82ddfc6a285eb6bd20e1a9a7e625acc3efd865743c618575bffe0a648ff
+Wallet deployed at address: 0:97cbe26e00433001afe6a06836f3476a9a79cba995bf1733090f3947acc8c6f3
